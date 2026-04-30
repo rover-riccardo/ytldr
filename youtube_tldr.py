@@ -1,6 +1,7 @@
 import sys
 import re
 import argparse
+import subprocess
 from pathlib import Path
 
 from youtube_transcript_api import YouTubeTranscriptApi
@@ -63,6 +64,8 @@ def main():
     parser = argparse.ArgumentParser(description="Fetch YouTube video transcript")
     parser.add_argument("url", help="YouTube video URL")
     parser.add_argument("--save", action="store_true", help="Save output to a markdown file")
+    parser.add_argument("--summary", nargs="?", const=6, type=int, metavar="N",
+                        help="Summarize via claude haiku with up to N bullet points (default: 6)")
     args = parser.parse_args()
 
     video_id = extract_video_id(args.url)
@@ -91,12 +94,30 @@ def main():
 {transcript}
 """
 
+    if args.summary:
+        print("Summarizing...", file=sys.stderr)
+        prompt = (
+            f"Summarize the following video transcript in markdown. "
+            f"Start with a one-paragraph overview, then provide a bullet point list "
+            f"of up to {args.summary} key points. Be concise."
+        )
+        result = subprocess.run(
+            ["claude", "-p", "--model", "haiku", prompt],
+            input=md, capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            print(result.stderr, file=sys.stderr)
+            sys.exit(1)
+        output = result.stdout
+    else:
+        output = md
+
     if args.save:
         filename = f"{slugify(meta['title'])}.md"
-        Path(filename).write_text(md)
+        Path(filename).write_text(output)
         print(f"Saved to {filename}", file=sys.stderr)
     else:
-        print(md)
+        print(output)
 
 
 if __name__ == "__main__":
