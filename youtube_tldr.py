@@ -96,11 +96,15 @@ def main():
 
     if args.summary:
         print("Summarizing...", file=sys.stderr)
-        prompt = (
-            f"Summarize the following video transcript in markdown. "
-            f"Start with a one-paragraph overview, then provide a bullet point list "
-            f"of up to {args.summary} key points. Be concise."
-        )
+        prompt_file = Path("prompt.txt")
+        if prompt_file.exists():
+            prompt = prompt_file.read_text().strip().replace("{N}", str(args.summary))
+        else:
+            prompt = (
+                f"Summarize the following video transcript in markdown. "
+                f"Start with a one-paragraph overview, then provide a bullet point list "
+                f"of up to {args.summary} key points. Be concise."
+            )
         result = subprocess.run(
             ["claude", "-p", "--model", "haiku", prompt],
             input=md, capture_output=True, text=True,

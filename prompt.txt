@@ -1,0 +1,1 @@
+Summarize the following video transcript in markdown. Start with a one-paragraph overview, then provide a bullet point list of up to {N} key points. Be concise.
