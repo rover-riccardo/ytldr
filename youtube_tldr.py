@@ -1,11 +1,3 @@
-# /// script
-# requires-python = ">=3.10"
-# dependencies = [
-#     "youtube-transcript-api",
-#     "yt-dlp",
-# ]
-# ///
-
 import sys
 import re
 import argparse

@@ -1,0 +1,16 @@
+[project]
+name = "youtube-tldr"
+version = "0.1.0"
+description = "Fetch YouTube video transcripts as markdown"
+requires-python = ">=3.10"
+dependencies = [
+    "youtube-transcript-api",
+    "yt-dlp",
+]
+
+[project.scripts]
+ytldr = "youtube_tldr:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
